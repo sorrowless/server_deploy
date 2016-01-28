@@ -1,0 +1,43 @@
+server {
+    listen 80;
+    server_name <%= @domain -%> www.<%= @domain -%>;
+    return 301 https://<%= @domain -%>$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    ssl_certificate /etc/nginx/ssl/www.<%= @domain -%>.crt;
+    ssl_certificate_key /etc/nginx/ssl/www.<%= @domain -%>.key;
+    ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+    ssl_session_cache shared:SSL:10m;
+    ssl_ciphers         EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH;
+    ssl_prefer_server_ciphers   on;
+    #add_header Strict-Transport-Security 'max-age=31536000; includeSubDomains';
+
+    # where logs should be placed
+    access_log /var/log/nginx/<%= @domain -%>.access.log;
+    error_log /var/log/nginx/<%= @domain -%>.error.log;
+
+    root /var/www/html/mainsite/;
+    index index.html index.htm;
+
+    server_name <%= @domain -%>;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    error_page  404              /404.html;
+    location = /404.html {
+        root   /usr/share/nginx/html;
+    }
+
+    location /doc/ {
+        alias /usr/share/doc/;
+        autoindex on;
+        allow 127.0.0.1;
+        deny all;
+    }
+}
+

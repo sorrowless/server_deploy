@@ -1,0 +1,29 @@
+server {
+    listen 80;
+
+    root /var/www/html/blog/;
+    index index.html index.htm;
+
+    server_name blog.<%= @domain -%>;
+
+    # where logs should be placed
+    access_log /var/log/nginx/blog.<%= @domain -%>.access.log;
+    error_log /var/log/nginx/blog.<%= @domain -%>.error.log;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    error_page  404              /404.html;
+    location = /404.html {
+        root   /usr/share/nginx/html;
+    }
+
+    location /doc/ {
+        alias /usr/share/doc/;
+        autoindex on;
+        allow 127.0.0.1;
+        deny all;
+    }
+}
+

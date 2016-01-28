@@ -1,0 +1,79 @@
+# Transform 'user' to 'user@<%= @myorigin %>' when connect and send
+myorigin = <%= @myorigin %> 
+
+mynetworks = 127.0.0.0/8
+mydomain = $myorigin
+mydestination = $mydomain, $myhostname, localhost
+
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_security_options = noanonymous, noplaintext
+smtpd_sasl_local_domain = $mydomain
+broken_sasl_auth_clients = yes
+
+smtpd_use_tls = yes
+smtpd_tls_cert_file = /etc/postfix/keys/mailcert.pem
+smtpd_tls_key_file = /etc/postfix/keys/mailkey.pem
+smtpd_tls_auth_only = yes
+smtpd_sasl_tls_security_options = noanonymous
+
+mailbox_transport = lmtp:unix:/var/lib/imap/socket/lmtp
+
+smtp_tls_security_level = may
+
+#smtpd_relay_restrictions =
+#        permit_mynetworks
+#        permit_sasl_authenticated
+#        reject_unauth_destination
+
+# spam restrictions
+disable_vrfy_command = yes
+smtpd_delay_reject = yes
+ # We will DENY empty HELO when client connects
+smtpd_helo_required = yes
+
+smtpd_helo_restrictions =
+        reject_invalid_hostname,
+        permit_mynetworks,
+# we need next line to access mails from home nas crontab
+        check_helo_access regexp:/etc/postfix/helo_regexp,
+        reject_non_fqdn_hostname,
+        reject_unknown_hostname,
+        permit
+
+smtpd_sender_restrictions = 
+        permit_sasl_authenticated,
+        reject_unknown_sender_domain,
+        reject_non_fqdn_sender,
+        permit
+
+smtpd_recipient_restrictions =
+        permit_mynetworks,
+        permit_sasl_authenticated,
+        reject_unauth_pipelining,
+        reject_non_fqdn_recipient,
+        reject_unknown_recipient_domain,
+        reject_unauth_destination,
+        reject_unverified_sender,
+        permit
+
+smtpd_client_restrictions = 
+        permit_mynetworks,
+        reject_rbl_client list.dsbl.org,
+        reject_rbl_client bl.spamcop.net,
+        reject_rbl_client cbl.abuseat.org,
+        reject_rbl_client psbl.surriel.com,
+        reject_rbl_client spamsources.fabel.dk,
+        reject_rbl_client opm.blitzed.org,
+        reject_rbl_client combined.njabl.org,
+        reject_rbl_client dul.ru,
+        reject_rbl_client dialup.balcklist.jippg.org,
+        reject_rbl_client relays.mail-abuse.org,
+        reject_rbl_client dnsbl.sorbs.net,
+        reject_unknown_client,
+        permit
+
+header_checks = pcre:/etc/postfix/header_checks.pcre
+
+unknown_local_recipient_reject_code = 550
+
+

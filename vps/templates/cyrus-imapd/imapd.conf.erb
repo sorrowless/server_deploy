@@ -1,0 +1,19 @@
+configdirectory: /var/lib/imap
+partition-default: /var/spool/imap
+admins: <%= @cyrus_admin %>
+sievedir: /var/lib/imap/sieve
+sendmail: /usr/sbin/sendmail
+hashimapspool: true
+sasl_pwcheck_method: auxprop
+sasl_auxprop_plugin: sasldb 
+sasl_mech_list: PLAIN DIGEST-MD5
+loginrealms: <%= @loginrealms %>
+tls_cert_file: /etc/pki/cyrus-imapd/cyrus-imapd.pem
+tls_key_file: /etc/pki/cyrus-imapd/cyrus-imapd.pem
+tls_ca_file: /etc/pki/tls/certs/ca-bundle.crt
+unixhierarchysep: yes
+autocreatequota: -1
+autocreateinboxfolders: sent|drafts|spam|templates
+autosubscribeinboxfolders: sent|spam|drafts|templates
+# uncomment this if you're operating in a DSCP environment (RFC-4594)
+# qosmarking: af13
