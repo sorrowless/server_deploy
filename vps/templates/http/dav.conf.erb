@@ -1,0 +1,49 @@
+server {
+    listen       80;
+    server_name  dav.<%= @domain -%>;
+    return 301 https://dav.<%= @domain -%>$request_uri; 
+}
+
+server {
+    listen 443 ssl;
+    ssl_certificate /etc/nginx/ssl/dav.<%= @domain -%>.crt;
+    ssl_certificate_key /etc/nginx/ssl/dav.<%= @domain -%>.key;
+    ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+    ssl_session_cache shared:SSL:10m;
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers         EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH;
+    ssl_prefer_server_ciphers   on;
+    add_header Strict-Transport-Security 'max-age=31536000; includeSubDomains';
+
+    root  /var/www/html/baikal-regular/html;
+    index index.php;
+
+	rewrite ^/.well-known/caldav /cal.php redirect;
+	rewrite ^/.well-known/carddav /card.php redirect;
+
+    server_name dav.<%= @domain -%>;
+
+    # where logs should be placed
+    access_log /var/log/nginx/dav.<%= @domain -%>.access.log;
+    error_log /var/log/nginx/dav.<%= @domain -%>.error.log;
+    
+    charset utf-8;
+
+    location ~ /(\.ht|Core|Specific) {
+        deny all;
+        return 404;
+    }
+
+    location ~ ^(.+\.php)(.*)$ {
+
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_index index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include /etc/nginx/fastcgi_params;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}

@@ -1,0 +1,3 @@
+<% @helo_regexp.each do |helo, regexp| -%>
+/.*<%= helo -%>*/i OK <%= regexp %>
+<% end -%>
