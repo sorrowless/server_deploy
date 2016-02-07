@@ -3,6 +3,7 @@ class vps::nginx (
   $ssl_data = undef,
   $ensure_package = 'present',
   $ensure_service = 'running',
+  $acme = false,
 ){
   
   # we need php and php-xml for mail system, php-mbstring and php-mysql for rss
@@ -52,11 +53,6 @@ class vps::nginx (
   file { "/etc/nginx/conf.d/rss.${domain}.conf":
     ensure => present,
     content => template('vps/http/rss.conf.erb'),
-  }
-
-  file { "/etc/nginx/ssl/rss.${domain}.crt":
-    ensure => present,
-    content => $ssl_data['rss_cert'],
   }
   
   file { "/etc/nginx/ssl/rss.${domain}.key":

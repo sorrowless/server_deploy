@@ -69,10 +69,18 @@ class { 'vps::mail::cyrus-imapd':
 }
 
 
+$acme = hiera('use_letsencrypt', false)
 # install and configure nginx and all nginx sites
 class { 'vps::nginx':
   domain => hiera('nginx_domain'),
   ssl_data => hiera('nginx_ssl'),
+  acme => acme,
+}
+
+if $acme {
+  class { 'vps::letsencrypt':
+    ssl_data => hiera('nginx_ssl'),
+  }
 }
 
 

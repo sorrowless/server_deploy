@@ -2,7 +2,15 @@
 server {
     listen 80;
     server_name rss.<%= @domain -%>;
-    return 301 https://rss.<%= @domain -%>$request_uri; 
+    location / {
+        return 301 https://rss.<%= @domain -%>$request_uri;
+    }
+<% if @acme %>
+    location /.well-known/acme-challenge/ {
+        alias /var/www/html/challenges/;
+        try_files $uri =404;
+    }
+<% end -%>
 }
 
 server {
