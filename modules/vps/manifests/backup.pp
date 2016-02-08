@@ -1,5 +1,6 @@
 class vps::backup (
   $mysql_password,
+  $auth_keys,
 ){
 
   file { '/root/backup.sh':
@@ -18,7 +19,23 @@ class vps::backup (
     month => '*',
   }
 
- file { ['/backup','/backup/mysql','/backup/git','/backup/www/','/backup/configs/']:
-   ensure => directory,
- }
+  file { ['/backup','/backup/mysql','/backup/git','/backup/www/','/backup/configs/']:
+    ensure => directory,
+  }
+
+  #TODO(sbog): rework this ASAP
+  file { '/home/backup/.ssh':
+    ensure => directory,
+    owner => 'backup',
+    group => 'backup',
+  } ->
+
+  file { "/home/backup/.ssh/authorized_keys":
+    ensure => present,
+    owner => 'backup',
+    group => 'backup',
+    mode => '0600',
+    content => template('vps/backup_authorized_keys.erb'),
+  }
+
 }

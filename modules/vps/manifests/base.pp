@@ -106,6 +106,8 @@ class { 'vps::cron': }
 
 # configure backup
 $mysql_password = hiera('mysql_password')
+$backup_authorized_keys = hiera('backup_authorized_keys')
 class { 'vps::backup':
   mysql_password => $mysql_password,
+  auth_keys => $backup_authorized_keys,
 }
