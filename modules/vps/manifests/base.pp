@@ -85,5 +85,8 @@ if $acme {
 
 
 # install and configure mysql
-class { 'vps::mysql':
-}
+class { 'vps::mysql': }
+
+
+# configure sysctl
+class { 'vps::sysctl': }

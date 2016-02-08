@@ -1,0 +1,10 @@
+GIT
+  remote: https://github.com/duritong/puppet-sysctl.git
+  ref: v0.0.11
+  sha: 65ffe839a4ce785bc3901452488197a0ef158cd8
+  specs:
+    puppet-sysctl (0.0.11)
+
+DEPENDENCIES
+  puppet-sysctl (>= 0)
+
