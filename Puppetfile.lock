@@ -1,3 +1,10 @@
+FORGE
+  remote: https://forgeapi.puppetlabs.com
+  specs:
+    puppetlabs-concat (1.2.5)
+      puppetlabs-stdlib (< 5.0.0, >= 3.2.0)
+    puppetlabs-stdlib (4.11.0)
+
 GIT
   remote: https://github.com/duritong/puppet-sysctl.git
   ref: v0.0.11
@@ -5,6 +12,16 @@ GIT
   specs:
     puppet-sysctl (0.0.11)
 
+GIT
+  remote: https://github.com/luxflux/puppet-openvpn.git
+  ref: 3.0.0
+  sha: d38b0a11d0292194e82aaa8c728eb284dd986758
+  specs:
+    puppet-openvpn (3.0.0)
+      puppetlabs-concat (< 2.0.0, >= 1.0.1)
+      puppetlabs-stdlib (< 5.0.0, >= 1.0.0)
+
 DEPENDENCIES
+  puppet-openvpn (>= 0)
   puppet-sysctl (>= 0)
 

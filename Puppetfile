@@ -27,3 +27,7 @@
 mod 'puppet-sysctl',
     :git => 'https://github.com/duritong/puppet-sysctl.git',
     :ref => 'v0.0.11'
+
+mod 'puppet-openvpn',
+    :git => 'https://github.com/luxflux/puppet-openvpn.git',
+    :ref => '3.0.0'

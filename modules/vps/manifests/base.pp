@@ -11,6 +11,8 @@ package { $packages:
   ensure => present,
 }
 
+$openvpn_port = hiera('openvpn_port')
+$sshd_port = hiera('sshd_port')
 file { '/etc/sysconfig/iptables':
   ensure => present,
   content => template('vps/iptables.erb'),
@@ -20,9 +22,8 @@ file { '/etc/sysconfig/iptables':
 service { 'iptables':
   ensure => running,
   enable => true,
-} 
+}
 
-$sshd_port = hiera('sshd_port')
 $admin_user = hiera('admin_user')
 file { '/etc/ssh/sshd_config':
   ensure => present,
@@ -54,7 +55,7 @@ file { "/home/${admin_user}/.ssh/authorized_keys":
 $helo_regexp = hiera('postfix_helo_regexp', {})
 class { 'vps::mail::postfix':
   myorigin => hiera('postfix_myorigin'),
-  helo_regexp => $helo_regexp, 
+  helo_regexp => $helo_regexp,
   recipient_regexp => hiera('postfix_recipient_access'),
   virtual_reroute => hiera('postfix_virtual_rewrite'),
   mailcert => hiera('postfix_pemcert'),
@@ -90,3 +91,9 @@ class { 'vps::mysql': }
 
 # configure sysctl
 class { 'vps::sysctl': }
+
+
+# configure openvpn
+class { 'vps::openvpn':
+  servername => $admin_user,
+}
