@@ -1,0 +1,65 @@
+#!/bin/sh
+set -eux
+
+mysql_user='root'
+mysql_pass='<%= @mysql_password -%>'
+sqlbackup_path='/backup/mysql/'
+gitbackup_path='/backup/git/'
+
+# rotate gets 2 parameters:
+#  name - it is pattern for filename for rotating
+#  path - it is directory where rotating will be done
+rotate () {
+    echo -e 'Delete old backups...'
+    find $2 -type f -iname "*${1}*.gz" -atime +30 -print0 | xargs -0 -I {} rm -rf {}
+    echo -e "after deletion there is `find $2 -type f -iname "*${1}*.gz" | wc -l` backup files for $1"
+    return 0
+}
+
+# sql_backup gets 2 parameters:
+#  name - it is pattern for filename for backup, also it is db name for backup
+#  path - it is directory to which file with backup will be saved
+sql_backup () {
+    mysqldump -u$mysql_user -p$mysql_pass $1 2>&1 | gzip > `date +${2}db_${1}_dump.sql.%Y%m%d.%H%M%S.gz`
+    echo -e "$1 db backup complete..."
+    echo -e "count of backup files in ${2} for ${1} is "`find $2 -type f -iname "db_${1}_dump*.gz" | wc -l`
+    rotate $1 $2
+    echo -e "\n"
+    return 0
+}
+
+# file_backup gets 3 parameters:
+#  name - it is name for what we backup
+#  path_from - it is directory from which files are got
+#  path_to - it is directory to which file with backup will be saved
+files_backup () {
+    tar -zcvf `date +${3}${1}.%Y%m%d.%H%M%S.tar.gz` $2 >/dev/null 2>&1
+    echo -e "$1 backup complete..."
+    echo -e "count of backup files in ${3} for ${1} is "`find $3 -type f -iname "${1}*.gz" | wc -l`
+    rotate $1 $3
+    echo -e "\n"
+    return 0
+}
+
+echo -e "Backup sensitive data. Started on `date`.\n"
+echo -e 'Backup mysql...'
+
+sql_backup mysql $sqlbackup_path
+sql_backup tt_rss $sqlbackup_path
+sql_backup baikal $sqlbackup_path
+
+echo -e 'Backup git...'
+files_backup git "/data/git" $gitbackup_path
+
+echo -e 'Backup http sites...'
+files_backup http_sites "/var/www/html" "/backup/www/"
+
+echo -e 'Backup sasldb...'
+files_backup sasldb "/etc/sasldb2" "/backup/configs/"
+
+echo -e 'Set permissions...\n'
+chown -R root:backup /backup
+chmod -R 750 /backup
+
+echo -e "Done on `date`.\n"
+echo "Backup was successful."

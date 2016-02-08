@@ -31,3 +31,7 @@ mod 'puppet-sysctl',
 mod 'puppet-openvpn',
     :git => 'https://github.com/luxflux/puppet-openvpn.git',
     :ref => '3.0.0'
+
+mod 'puppetlabs-vcsrepo',
+    :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo.git',
+    :ref => '1.3.2'

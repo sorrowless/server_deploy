@@ -23,18 +23,10 @@ class vps::openvpn (
     persist_key => true,
     persist_tun => true,
     local => '',
-  } ->
+  }
 
-  # rewrite default keys. It's a dirty way, but upstream module doesn't support
-  # predefined set of keys
-  file {
-    "${basedir}/keys/ca.crt":
-      content => hiera('openvpn_cacrt');
-    "${basedir}/keys/ca.key":
-      content => hiera('openvpn_cakey');
-    "${basedir}/keys/server.crt":
-      content => hiera('openvpn_servercrt');
-    "${basedir}/keys/server.key":
-      content => hiera('openvpn_serverkey');
-  } ~> Service['openvpn']
+  openvpn::client { 'client':
+    server => $servername,
+    port => $port,
+  }
 }

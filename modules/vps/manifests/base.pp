@@ -80,6 +80,7 @@ class { 'vps::nginx':
 
 if $acme {
   class { 'vps::letsencrypt':
+    domain => hiera('nginx_domain'),
     ssl_data => hiera('nginx_ssl'),
   }
 }
@@ -96,4 +97,15 @@ class { 'vps::sysctl': }
 # configure openvpn
 class { 'vps::openvpn':
   servername => $admin_user,
+}
+
+
+# install and configure cron
+class { 'vps::cron': }
+
+
+# configure backup
+$mysql_password = hiera('mysql_password')
+class { 'vps::backup':
+  mysql_password => $mysql_password,
 }
