@@ -11,6 +11,9 @@ package { $packages:
   ensure => present,
 }
 
+$vpn_network = hiera('vpn_network')
+$internal_interface = hiera('internal_interface')
+$external_interface = hiera('external_interface')
 $openvpn_port = hiera('openvpn_port')
 $sshd_port = hiera('sshd_port')
 file { '/etc/sysconfig/iptables':
