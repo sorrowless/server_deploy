@@ -13,7 +13,8 @@ tls_key_file: /etc/nginx/ssl/www.sbog.ru.key
 tls_ca_file: /etc/pki/tls/certs/ca-bundle.crt
 unixhierarchysep: yes
 autocreatequota: -1
-autocreateinboxfolders: sent|drafts|spam|templates
-autosubscribeinboxfolders: sent|spam|drafts|templates
+autocreateinboxfolders: Sent|Drafts|Spam|Templates
+autosubscribeinboxfolders: Sent|Spam|Drafts|Templates
+lmtp_downcase_rcpt: 1
 # uncomment this if you're operating in a DSCP environment (RFC-4594)
 # qosmarking: af13
