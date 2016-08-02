@@ -32,6 +32,6 @@ COMMIT
 -A INPUT -p tcp -m tcp --dport 587 -m comment --comment "allow smtp over ssl" -j ACCEPT
 -A INPUT -p tcp -m tcp --dport 993 -m comment --comment "allow imap over ssl" -j ACCEPT
 -A INPUT -p tcp -m tcp --dport 80 -m comment --comment "allow http" -j ACCEPT
--A FORWARD -s <%= @vpn_network -%> -i <%= @internal_interface -%> -o <%= @external_interface -%> venet0 -m conntrack --ctstate NEW -j ACCEPT
+-A FORWARD -s <%= @vpn_network -%> -i <%= @internal_interface -%> -o <%= @external_interface -%> -m conntrack --ctstate NEW -j ACCEPT
 -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 COMMIT

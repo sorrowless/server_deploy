@@ -11,54 +11,39 @@ package { $packages:
   ensure => present,
 }
 
+# Start defining local variables
+
 $vpn_network = hiera('vpn_network')
 $internal_interface = hiera('internal_interface')
 $external_interface = hiera('external_interface')
 $openvpn_port = hiera('openvpn_port')
 $sshd_port = hiera('sshd_port')
-file { '/etc/sysconfig/iptables':
-  ensure => present,
-  content => template('vps/iptables.erb'),
-  notify => Service['iptables'],
-}
-
-service { 'iptables':
-  ensure => running,
-  enable => true,
-}
 
 $admin_user = hiera('admin_user')
-file { '/etc/ssh/sshd_config':
-  ensure => present,
-  content => template('vps/sshd_config.erb'),
-  notify => Service['sshd'],
+
+$acme = hiera('use_letsencrypt', false)
+
+# End defining local variables
+
+# Setup iptables
+class { 'vps::iptables':
+  vpn_network => $vpn_network,
+  internal_interface => $internal_interface,
+  external_interface => $external_interface,
+  sshd_port => $sshd_port,
+  openvpn_port => $openvpn_port,
 }
 
-service { 'sshd':
-  ensure => running,
-  enable => true,
+# Setup sshd and keys for it
+class { 'vps::ssh':
+  sshd_port => $sshd_port,
 }
 
-$authorized_keys = hiera('authorized_keys')
-file { "/home/${admin_user}/.ssh":
-  ensure => directory,
-  owner => $admin_user,
-  group => $admin_user,
-} ->
 
-file { "/home/${admin_user}/.ssh/authorized_keys":
-  ensure => present,
-  owner => $admin_user,
-  group => $admin_user,
-  mode => '0600',
-  content => template('vps/authorized_keys.erb'),
-}
-
-# install and configure postfix
-$helo_regexp = hiera('postfix_helo_regexp', {})
+# Install and configure postfix
 class { 'vps::mail::postfix':
   myorigin => hiera('postfix_myorigin'),
-  helo_regexp => $helo_regexp,
+  helo_regexp => hiera('postfix_helo_regexp', {}),
   recipient_regexp => hiera('postfix_recipient_access'),
   virtual_reroute => hiera('postfix_virtual_rewrite'),
   mailcert => hiera('postfix_pemcert'),
@@ -66,15 +51,14 @@ class { 'vps::mail::postfix':
 }
 
 
-# install and configure cyrus-imapd
+# Install and configure cyrus-imapd
 class { 'vps::mail::cyrus-imapd':
   cyrus_admin => hiera('cyrus_admin'),
   loginrealms => hiera('cyrus_loginrealms'),
 }
 
 
-$acme = hiera('use_letsencrypt', false)
-# install and configure nginx and all nginx sites
+# Install and configure nginx and all nginx sites
 class { 'vps::nginx':
   domain => hiera('nginx_domain'),
   ssl_data => hiera('nginx_ssl'),

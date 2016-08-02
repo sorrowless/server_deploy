@@ -14,6 +14,13 @@ class vps::letsencrypt (
     content => $ssl_data['rss_csr'],
   }
 
+  $beardlylionbase_path = '/etc/nginx/ssl/beardlylion'
+  $beardlylioncsr_path = "${beardlylionbase_path}.csr"
+  file { $beardlylioncsr_path:
+    ensure => present,
+    content => $ssl_data['beardlylion_csr'],
+  }
+
   $account_path = '/root/le_account.key'
   file { $account_path:
     ensure => present,
@@ -30,6 +37,14 @@ class vps::letsencrypt (
   cron { "regenerate rss.${domain} certificate":
     command => "python ${letsencrypt_path}/acme_tiny.py --account-key ${account_path} --csr ${rsscsr_path} --acme-dir /var/www/html/challenges/ > ${rssbase_path}.${domain}.crt && service nginx reload",
     minute => '1',
+    hour => '0',
+    monthday => '1',
+    month => '*',
+  }
+
+  cron { "regenerate beardlylion certificate":
+    command => "python ${letsencrypt_path}/acme_tiny.py --account-key ${account_path} --csr ${beardlylioncsr_path} --acme-dir /var/www/html/challenges/ > ${beardlylionbase_path}.crt && service nginx reload",
+    minute => '3',
     hour => '0',
     monthday => '1',
     month => '*',

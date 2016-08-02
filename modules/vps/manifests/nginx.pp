@@ -5,7 +5,7 @@ class vps::nginx (
   $ensure_service = 'running',
   $acme = false,
 ){
-  
+
   # we need php and php-xml for mail system, php-mbstring and php-mysql for rss
   package { ['nginx', 'php-fpm', 'php', 'php-xml', 'php-mbstring', 'php-mysql', 'php-process']:
     ensure => $ensure_package,
@@ -15,6 +15,7 @@ class vps::nginx (
     ensure => directory,
   }
 
+  File <| title == '/etc/nginx/ssl' |> -> Exec['create dhparam']
   Package <| title == 'nginx' |> -> File<||> -> Service['nginx','php-fpm']
 
   file { '/etc/nginx/nginx.conf':
@@ -43,12 +44,10 @@ class vps::nginx (
     content => $ssl_data['dav_key'],
   }
 
-
   file { "/etc/nginx/conf.d/mail.${domain}.conf":
     ensure => present,
     content => template('vps/http/mail.conf.erb'),
   }
-
 
   file { "/etc/nginx/conf.d/rss.${domain}.conf":
     ensure => present,
@@ -58,6 +57,17 @@ class vps::nginx (
   file { "/etc/nginx/ssl/rss.${domain}.key":
     ensure => present,
     content => $ssl_data['rss_key'],
+  }
+
+  # We need unhardcode this as soon as possible
+  file { "/etc/nginx/conf.d/beardlylion.conf":
+    ensure => present,
+    content => template('vps/http/beardlylion.conf.erb'),
+  }
+
+  file { "/etc/nginx/ssl/beardlylion.key":
+    ensure => present,
+    content => $ssl_data['beardlylion_key'],
   }
   
   file { "/etc/init.d/ttrss-daemon":

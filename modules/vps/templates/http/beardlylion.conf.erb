@@ -1,0 +1,58 @@
+server {
+    listen 80;
+    server_name beardlylion.com;
+    location / {
+        return 301 https://beardlylion.com$request_uri;
+    }
+<% if @acme %>
+    location /.well-known/acme-challenge/ {
+        alias /var/www/html/challenges/;
+        try_files $uri =404;
+    }
+<% end -%>
+}
+
+server {
+    listen 443 ssl;
+    server_name beardlylion.com;
+    ssl_certificate /etc/nginx/ssl/beardlylion.crt;
+    ssl_certificate_key /etc/nginx/ssl/beardlylion.key;
+    ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+    ssl_session_cache shared:SSL:10m;
+    ssl_ciphers         EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH;
+    ssl_prefer_server_ciphers   on;
+    add_header Strict-Transport-Security 'max-age=31536000; includeSubDomains';
+
+    # where logs should be placed
+    access_log /var/log/nginx/beardlylion.com.access.log;
+    error_log /var/log/nginx/beardlylion.com.error.log;
+
+    root /var/www/html/finland/;
+    #location / {
+    #  index index.html index.htm;
+    #}
+
+    location / { try_files $uri @finland; }
+    location @finland {
+        include uwsgi_params;
+        uwsgi_pass 127.0.0.1:33033;
+    }
+
+    location /static {
+      root /var/www/html/finland/admin/;
+    }
+
+    error_page  404              /404.html;
+    location = /404.html {
+        root   /usr/share/nginx/html;
+    }
+
+    location /doc/ {
+        alias /usr/share/doc/;
+        autoindex on;
+        allow 127.0.0.1;
+        deny all;
+    }
+}
+

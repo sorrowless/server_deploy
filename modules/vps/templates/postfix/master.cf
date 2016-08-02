@@ -9,6 +9,7 @@
 #               (yes)   (yes)   (yes)   (never) (100)
 # ==========================================================================
 smtp      inet  n       -       n       -       -       smtpd
+  -o content_filter=spamfilter:dummy
 submission inet n       -       n       -       -       smtpd
   -o smtpd_tls_security_level=encrypt
   -o smtpd_sasl_auth_enable=yes
@@ -102,3 +103,5 @@ scache    unix  -       -       n       -       1       scache
 #mailman   unix  -       n       n       -       -       pipe
 #  flags=FR user=list argv=/usr/lib/mailman/bin/postfix-to-mailman.py
 #  ${nexthop} ${user}
+spamfilter unix - n n - - pipe
+  flags=Rq user=spamfilter argv=/usr/local/bin/spamfilter -f ${sender} -- ${recipient}

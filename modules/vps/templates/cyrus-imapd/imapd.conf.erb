@@ -8,8 +8,8 @@ sasl_pwcheck_method: auxprop
 sasl_auxprop_plugin: sasldb
 sasl_mech_list: PLAIN DIGEST-MD5
 loginrealms: <%= @loginrealms %>
-tls_cert_file: /etc/nginx/ssl/www.sbog.ru.crt
-tls_key_file: /etc/nginx/ssl/www.sbog.ru.key
+tls_cert_file: /etc/pki/cyrus-imapd/cyrus-imapd.pem
+tls_key_file: /etc/pki/cyrus-imapd/cyrus-imapd.pem
 tls_ca_file: /etc/pki/tls/certs/ca-bundle.crt
 unixhierarchysep: yes
 autocreatequota: -1
