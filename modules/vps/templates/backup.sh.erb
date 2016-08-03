@@ -58,6 +58,12 @@ files_backup http_sites "/var/www/html" "/backup/www/"
 echo -e 'Backup sasldb...'
 files_backup sasldb "/etc/sasldb2" "/backup/configs/"
 
+echo -e 'Backup spamassassin bayess db'
+sa-learn --backup > /backup/configs/bayees.backup
+
+echo -e 'Backup cyrus-imapd mailboxes'
+rsync -vaR --delete --delete-after /var/lib/imap /var/spool/imap /backup/cyrus-imapd/
+
 echo -e 'Set permissions...\n'
 chown -R root:backup /backup
 chmod -R 750 /backup

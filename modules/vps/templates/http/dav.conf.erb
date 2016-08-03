@@ -1,7 +1,15 @@
 server {
     listen       80;
     server_name  dav.<%= @domain -%>;
-    return 301 https://dav.<%= @domain -%>$request_uri; 
+    location / {
+        return 301 https://dav.<%= @domain -%>$request_uri;
+    }
+<% if @acme %>
+    location /.well-known/acme-challenge/ {
+        alias /var/www/html/challenges/;
+        try_files $uri =404;
+    }
+<% end -%>
 }
 
 server {

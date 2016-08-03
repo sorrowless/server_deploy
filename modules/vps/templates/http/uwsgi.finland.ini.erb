@@ -1,0 +1,15 @@
+[uwsgi]
+uid = nginx
+gid = nginx
+master = true
+socket = 127.0.0.1:33033
+chdir = /var/www/html/finland
+virtualenv = /var/www/html/finland/venv/finland
+wsgi-file = /var/www/html/finland/run.py
+callable = app
+lazy-apps = true
+#module = run:app
+stats = 127.0.0.1:9191
+env LANG="ru_RU.UTF-8"
+env LC_ALL="ru_RU.UTF-8"
+env LC_LANG="ru_RU.UTF-8"

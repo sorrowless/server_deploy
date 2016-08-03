@@ -57,19 +57,14 @@ class { 'vps::mail::cyrus-imapd':
   loginrealms => hiera('cyrus_loginrealms'),
 }
 
+class { 'vps::mail::spamassassin': }
+
 
 # Install and configure nginx and all nginx sites
-class { 'vps::nginx':
+class { 'vps::nginx::nginx':
   domain => hiera('nginx_domain'),
   ssl_data => hiera('nginx_ssl'),
   acme => acme,
-}
-
-if $acme {
-  class { 'vps::letsencrypt':
-    domain => hiera('nginx_domain'),
-    ssl_data => hiera('nginx_ssl'),
-  }
 }
 
 
