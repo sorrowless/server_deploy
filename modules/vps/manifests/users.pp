@@ -9,8 +9,6 @@ class vps::users (
   $admin = hiera('admin_user')
   user { $admin:
     ensure => $ensure,
-    uid => 1000,
-    gid => 1000,
     password => hiera('admin_password'),
     managehome => true,
   }

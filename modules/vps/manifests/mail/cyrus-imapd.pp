@@ -31,13 +31,6 @@ class vps::mail::cyrus-imapd (
     ensure => present,
     content => template('vps/cyrus-imapd/sasl2/Sendmail.conf')
   } 
- 
-  file { '/etc/sasldb2':
-    ensure => present,
-    source => hiera('sasldb_path'),
-    owner => 'cyrus',
-    group => 'postfix',
-  } 
 
   File <||> -> Service <| title == 'saslsuthd' |>
   File <||> -> Service <| title == 'cyrus-imapd' |>
