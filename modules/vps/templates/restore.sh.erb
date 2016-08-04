@@ -12,8 +12,8 @@ mysql -u${mysql_user} -p${mysql_pass} < ${sqlbackup_path}all_dbs_last.sql
 
 rsync -va --delete --delete-after /backup/cyrus-imapd/var/lib/imap/ /var/lib/imap/
 rsync -va --delete --delete-after /backup/cyrus-imapd/var/spool/imap/ /var/spool/imap/
-chmod -R cyrus:mail /var/lib/imap/
-chmod -R cyrus:mail /var/spool/imap/
+chown -R cyrus:mail /var/lib/imap/
+chown -R cyrus:mail /var/spool/imap/
 
 sa-learn --restore /backup/bayees.backup
 
