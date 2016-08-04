@@ -11,6 +11,14 @@ class vps::backup (
     mode => '0750',
   }
 
+  file { '/root/restore.sh':
+    ensure => present,
+    content => template('vps/restore.sh.erb'),
+    owner => root,
+    group => root,
+    mode => '0750',
+  }
+
   cron { "backup data":
     command => "/root/backup.sh",
     minute => '1',

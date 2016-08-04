@@ -49,6 +49,9 @@ sql_backup tt_rss $sqlbackup_path
 sql_backup baikal $sqlbackup_path
 sql_backup beardly $sqlbackup_path
 
+echo -e "Create separate backup for all mysql db's for easier restoring on a blank server"
+mysqldump -u$mysql_user -p$mysql_pass $1 --all-databases 2>&1 | gzip > `date +all_dbs_dump.sql.%Y%m%d.%H%M%S.gz`
+
 echo -e 'Backup git...'
 files_backup git "/data/git" $gitbackup_path
 
