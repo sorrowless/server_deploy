@@ -32,6 +32,10 @@ define vps::letsencrypt::lehost (
 
   File <| title == $csr_path |> -> Exec["${name}.crt"]
 
+  file { "${out_path}/${name}.crt":
+    ensure => absent,
+  } ->
+
   exec { "${name}.crt":
     command => "python ${letsencrypt_path}/acme_tiny.py --account-key ${account_key} --csr ${csr_path} --acme-dir ${acme_dir} > ${out_path}/${name}.crt",
     path    => "/bin:/usr/bin"

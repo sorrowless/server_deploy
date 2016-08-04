@@ -14,8 +14,8 @@ server {
 
 server {
     listen 443 ssl;
-    ssl_certificate /etc/nginx/ssl/www.<%= @domain -%>.crt;
-    ssl_certificate_key /etc/nginx/ssl/www.<%= @domain -%>.key;
+    ssl_certificate /etc/nginx/ssl/mail.<%= @domain -%>.crt;
+    ssl_certificate_key /etc/nginx/ssl/mail.<%= @domain -%>.key;
     ssl_dhparam /etc/nginx/ssl/dhparam.pem;
     ssl_session_cache shared:SSL:10m;
     ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
