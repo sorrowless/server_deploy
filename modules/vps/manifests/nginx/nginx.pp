@@ -7,7 +7,7 @@ class vps::nginx::nginx(
 ){
 
   # we need php and php-xml for mail system, php-mbstring and php-mysql for rss
-  package { ['nginx', 'php-fpm', 'php', 'php-xml', 'php-mbstring', 'php-mysql', 'php-process', 'uwsgi']:
+  package { ['nginx', 'php-fpm', 'php', 'php-xml', 'php-mbstring', 'php-mysql', 'php-process', 'uwsgi', 'mysql-connector-python', 'gcc', 'python34-devel']:
     ensure => $ensure_package,
   } ->
 
